@@ -78,6 +78,21 @@ function timestamp(): string {
   );
 }
 
+/**
+ * Word metadata echoes back the escaped SSML we sent, so "&" arrives as
+ * "&amp;". Without this the entity ends up burned into the captions.
+ */
+export function unescapeXml(text: string): string {
+  return text
+    .replace(/&#x([0-9a-f]+);/gi, (_, hex: string) => String.fromCodePoint(Number.parseInt(hex, 16)))
+    .replace(/&#(\d+);/g, (_, code: string) => String.fromCodePoint(Number.parseInt(code, 10)))
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'")
+    .replace(/&amp;/g, "&");
+}
+
 function escapeXml(text: string): string {
   return text
     .replace(/&/g, "&amp;")
@@ -342,7 +357,7 @@ function parseMetadata(body: string): EdgeWord[] {
     const text = entry.Data?.text?.Text;
     if (!text) continue;
     words.push({
-      text,
+      text: unescapeXml(text),
       // Timings arrive in 100-nanosecond ticks.
       offset: (entry.Data?.Offset ?? 0) / 1e7,
       duration: (entry.Data?.Duration ?? 0) / 1e7,

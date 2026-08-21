@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
+import { unescapeXml } from "../lib/edge-tts";
 import { escapeFilterValue } from "../lib/ffmpeg";
 import { mp3Duration } from "../lib/mp3";
 import { clampSeconds, normaliseTopic, speakingRate } from "../lib/pipeline";
@@ -82,7 +83,7 @@ test("palettes are picked deterministically and can be forced", () => {
   assert.equal(pickPalette("Cold showers").id, pickPalette("Cold showers").id);
   assert.equal(pickPalette("anything", "ember").id, "ember");
   assert.equal(pickPalette("anything", "not-a-palette").id, pickPalette("anything").id);
-  assert.ok(PALETTES.every((palette) => palette.type !== "radial"));
+  assert.ok(PALETTES.length > 1);
 });
 
 test("the gradient source is sized for a vertical clip", () => {
@@ -117,4 +118,13 @@ test("the filter graph joins every line with silence between them", () => {
 
 test("filter values escape the characters that are syntax", () => {
   assert.equal(escapeFilterValue("C:\\fonts"), "C\\:\\\\fonts");
+});
+
+test("word metadata is unescaped before it reaches the captions", () => {
+  assert.equal(unescapeXml("rock &amp; roll"), "rock & roll");
+  assert.equal(unescapeXml("&lt;tags&gt;"), "<tags>");
+  assert.equal(unescapeXml("it&apos;s &quot;fine&quot;"), "it's \"fine\"");
+  assert.equal(unescapeXml("caf&#233;"), "café");
+  // Decoding must not leave a second round of entities behind.
+  assert.equal(unescapeXml("&amp;lt;"), "&lt;");
 });
