@@ -286,12 +286,14 @@ summary {
 }
 
 pre {
-  overflow-x: auto;
   background: rgba(0, 0, 0, 0.35);
   padding: 12px;
   border-radius: 10px;
   font-size: 12.5px;
   margin: 12px 0 0;
+  /* Wrap rather than scroll, so the whole command is readable on a phone. */
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 footer {
