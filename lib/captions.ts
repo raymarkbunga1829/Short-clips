@@ -173,8 +173,9 @@ export function buildAss(options: AssOptions): string {
   const titleLines = wrapText(escapeAss(options.title), 30, 2);
   if (titleLines.length > 0) {
     events.push(
+      // Visible from the very first frame, which the player uses as the poster.
       `Dialogue: 0,${assTime(0)},${assTime(options.duration)},Title,,0,0,0,,` +
-        `{\\fad(400,350)}${titleLines.join("\\N")}`,
+        `{\\fad(0,350)}${titleLines.join("\\N")}`,
     );
   }
 

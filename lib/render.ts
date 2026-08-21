@@ -94,8 +94,10 @@ export function buildFilterGraph(options: GraphOptions): string {
 
   parts.push(
     "[0:v]eq=brightness=-0.05:saturation=1.08,vignette=PI/4," +
+      // No fade from black: the first frame doubles as the poster in the
+      // player, so it needs to show the background and title straight away.
       `ass=${escapeFilterValue(options.assFile)}:fontsdir=${escapeFilterValue(options.fontsDir)},` +
-      "fade=t=in:st=0:d=0.35,format=yuv420p[video]",
+      "format=yuv420p[video]",
   );
 
   return parts.join(";");

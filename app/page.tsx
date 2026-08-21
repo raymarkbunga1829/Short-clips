@@ -49,6 +49,7 @@ export default function Home() {
   const [canShare, setCanShare] = useState(false);
 
   const clipRef = useRef<Clip | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
   clipRef.current = clip;
 
   useEffect(() => {
@@ -69,6 +70,9 @@ export default function Home() {
     if (!clip) return;
     const file = new File([clip.blob], clip.filename, { type: "video/mp4" });
     setCanShare(Boolean(navigator.canShare?.({ files: [file] })));
+    // Browsers block autoplay for anything with sound, and this clip is mostly
+    // sound. Ask anyway, and fall back to the poster frame and the play button.
+    void videoRef.current?.play().catch(() => undefined);
   }, [clip]);
 
   async function generate(event: React.FormEvent) {
@@ -204,7 +208,14 @@ export default function Home() {
       {clip && (
         <section className="card" aria-label="Your clip">
           {/* eslint-disable-next-line jsx-a11y/media-has-caption -- captions are burned into the video */}
-          <video className="player" src={clip.url} controls playsInline autoPlay preload="auto" />
+          <video
+            ref={videoRef}
+            className="player"
+            src={clip.url}
+            controls
+            playsInline
+            preload="auto"
+          />
 
           <div className="actions">
             <a className="secondary" href={clip.url} download={clip.filename}>
