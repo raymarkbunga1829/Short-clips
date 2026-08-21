@@ -148,8 +148,8 @@ export function buildAss(options: AssOptions): string {
       " Shadow, Alignment, MarginL, MarginR, MarginV, Encoding",
     `Style: Caption,${font},${captionSize},${white},${accent},${outline},${shadow},` +
       `0,0,0,0,100,100,1,0,1,10,5,2,80,80,${Math.round(height * 0.42)},1`,
-    `Style: Title,${font},56,${white},${white},${outline},${shadow},` +
-      `0,0,0,0,100,100,2,0,1,5,3,8,110,110,${Math.round(height * 0.07)},1`,
+    `Style: Title,${font},64,${white},${white},${outline},${shadow},` +
+      `0,0,0,0,100,100,2,0,1,7,3,8,100,100,${Math.round(height * 0.065)},1`,
     `Style: Bar,${font},40,${accent},${accent},${accent},${accent},` +
       "0,0,0,0,100,100,0,0,1,0,0,7,0,0,0,1",
     "",

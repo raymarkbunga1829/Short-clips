@@ -56,8 +56,11 @@ export function clampSeconds(raw: unknown): number {
 
 /**
  * Picks a speaking rate that lands the finished clip near the requested length.
- * Short-form voiceover also just sounds better a little faster than default.
+ * The small bias keeps short-form delivery punchy, and errs under the target
+ * rather than over it.
  */
+const RATE_BIAS_PERCENT = 3;
+
 export function speakingRate(wordCount: number, seconds: number, lineCount: number): string {
   const speechBudget = Math.max(
     seconds - TIMING.leadIn - TIMING.tail - Math.max(lineCount - 1, 0) * TIMING.gap,
@@ -65,7 +68,7 @@ export function speakingRate(wordCount: number, seconds: number, lineCount: numb
   );
   const naturalSeconds = wordCount / WORDS_PER_SECOND;
   const adjustment = Math.round((naturalSeconds / speechBudget - 1) * 100);
-  const percent = Math.min(40, Math.max(-5, adjustment + 6));
+  const percent = Math.min(40, Math.max(-5, adjustment + RATE_BIAS_PERCENT));
   return `${percent >= 0 ? "+" : ""}${percent}%`;
 }
 
